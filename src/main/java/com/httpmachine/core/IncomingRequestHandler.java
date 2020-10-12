@@ -11,6 +11,7 @@ public class IncomingRequestHandler implements Runnable {
 
     private final Socket socket;
     private final RequestParser requestParser;
+    private final DummyRequestHandler requestHandler = new DummyRequestHandler();
 
     public IncomingRequestHandler(Socket socket, RequestParser requestParser) {
         this.socket = socket;
@@ -21,7 +22,8 @@ public class IncomingRequestHandler implements Runnable {
     public void run() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-                requestParser.service(reader, writer);
+                Request request = requestParser.parse(reader);
+                requestHandler.handleRequest(request, new Response(writer));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

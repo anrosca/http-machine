@@ -9,6 +9,13 @@ public enum HttpVersion {
         this.alias = alias;
     }
 
+    @Override
+    public String toString() {
+        return "HttpVersion{" +
+                "alias='" + alias + '\'' +
+                '}';
+    }
+
     public static HttpVersion from(String alias) {
         for (HttpVersion version : values()) {
             if (version.alias.equals(alias))
