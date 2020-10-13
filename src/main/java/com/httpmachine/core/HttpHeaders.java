@@ -14,7 +14,7 @@ public class HttpHeaders {
         return Collections.unmodifiableMap(headers);
     }
 
-    private void addHeader(String headerName, String value) {
+    public void addHeader(String headerName, String value) {
         headers.put(headerName, value);
     }
 

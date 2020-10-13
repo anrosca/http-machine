@@ -35,16 +35,25 @@ public class RequestParser {
 
     private InputStream readPayload(BufferedReader reader) {
         try {
-            StringWriter out = new StringWriter();
-            char[] buffer = new char[4096];
-            int charsRead;
-            while ((charsRead = reader.read(buffer, 0, buffer.length)) > 0) {
-                out.write(buffer, 0, charsRead);
+            if (reader.ready()) {
+                return doReadPayload(reader);
             }
-            return new ByteArrayInputStream(out.toString().getBytes(StandardCharsets.UTF_8));
+            return null;
         } catch (IOException e) {
             throw new InvalidHttpRequestException("Could not read HTTP request body", e);
         }
+    }
+
+    private ByteArrayInputStream doReadPayload(BufferedReader reader) throws IOException {
+        StringWriter out = new StringWriter();
+        char[] buffer = new char[4096];
+        int charsRead;
+        do {
+            charsRead = reader.read(buffer, 0, buffer.length);
+            if (charsRead > 0)
+                out.write(buffer, 0, charsRead);
+        } while (charsRead >= buffer.length);
+        return new ByteArrayInputStream(out.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     private void addHeader(HttpHeadersBuilder httpHeadersBuilder, String line) {

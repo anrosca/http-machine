@@ -11,7 +11,7 @@ public class IncomingRequestHandler implements Runnable {
 
     private final Socket socket;
     private final RequestParser requestParser;
-    private final DummyRequestHandler requestHandler = new DummyRequestHandler();
+    private final ResponseWriter requestHandler = new ResponseWriter();
 
     public IncomingRequestHandler(Socket socket, RequestParser requestParser) {
         this.socket = socket;
@@ -23,7 +23,9 @@ public class IncomingRequestHandler implements Runnable {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()))) {
                 Request request = requestParser.parse(reader);
-                requestHandler.handleRequest(request, new Response(writer));
+                Response response = new Response(writer);
+                new DummyResponseHandler().handleRequest(request, response);
+                requestHandler.handleRequest(request, response);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,7 +39,7 @@ public class IncomingRequestHandler implements Runnable {
         try {
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

@@ -68,7 +68,5 @@ public class HttpMachine implements Runnable {
     public static void main(String[] args) throws InterruptedException {
         HttpMachine machine = new HttpMachine();
         machine.start();
-        TimeUnit.SECONDS.sleep(10);
-        machine.stop();
     }
 }

@@ -11,9 +11,7 @@ public enum HttpVersion {
 
     @Override
     public String toString() {
-        return "HttpVersion{" +
-                "alias='" + alias + '\'' +
-                '}';
+        return alias;
     }
 
     public static HttpVersion from(String alias) {

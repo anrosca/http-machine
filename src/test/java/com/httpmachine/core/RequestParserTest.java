@@ -27,7 +27,7 @@ class RequestParserTest {
     }
 
     @ParameterizedTest(name = "Bad HTTP request line {0}")
-    @CsvSource({"GET_FUNKY", "GET FUNKY", "GET FUNKY LIKE ME"})
+    @CsvSource({"GET_FUNKY", "GET FUNKY", "GET FUNKY RIGHT NOW"})
     public void shouldThrowInvalidHttpRequestException_whenReceivingInvalidRequestLine(String badRequestLine) {
         BufferedReader reader = new BufferedReader(new StringReader(badRequestLine));
 
@@ -87,6 +87,7 @@ class RequestParserTest {
                 .thenReturn("POST /test HTTP/1.1")
                 .thenReturn("Host: foo.example")
                 .thenReturn("");
+        when(reader.ready()).thenReturn(true);
         when(reader.read(any(char[].class), anyInt(), anyInt())).thenThrow(IOException.class);
 
         assertThrows(InvalidHttpRequestException.class, () -> requestParser.parse(reader));
