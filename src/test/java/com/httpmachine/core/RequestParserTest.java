@@ -87,7 +87,7 @@ class RequestParserTest {
                 .thenReturn("POST /test HTTP/1.1")
                 .thenReturn("Host: foo.example")
                 .thenReturn("");
-        when(reader.ready()).thenReturn(true);
+        when(reader.ready()).thenReturn(true).thenReturn(false);
         when(reader.read(any(char[].class), anyInt(), anyInt())).thenThrow(IOException.class);
 
         assertThrows(InvalidHttpRequestException.class, () -> requestParser.parse(reader));
