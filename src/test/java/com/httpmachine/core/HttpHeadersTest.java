@@ -6,7 +6,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HttpHeadersTest {
+public class HttpHeadersTest {
 
     @Test
     public void newlyCreatedHttpHeaders_shouldBeEmpty() {

@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class RequestParserTest {
+public class RequestParserTest {
 
     private final RequestParser requestParser = new RequestParser();
 

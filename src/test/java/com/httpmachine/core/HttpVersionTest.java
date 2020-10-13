@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HttpVersionTest {
+public class HttpVersionTest {
 
     @Test
     public void shouldReturnHttpVersionAccordingToSpec() {

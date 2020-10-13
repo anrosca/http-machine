@@ -1,5 +1,7 @@
 package com.httpmachine.core;
 
+import com.httpmachine.core.config.ServerConfig;
+import com.httpmachine.core.config.ServerConfigParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +17,13 @@ public class HttpMachine implements Runnable {
     private static final ExecutorService requestListenerService = Executors.newSingleThreadExecutor();
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final ServerConfig serverConfig;
     private volatile boolean stopRequested = false;
     private volatile ServerSocket serverSocket;
+
+    public HttpMachine(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+    }
 
     public void start() {
         log.debug("Running HttpMachine");
@@ -53,7 +60,7 @@ public class HttpMachine implements Runnable {
     @Override
     public void run() {
         try {
-            serverSocket = new ServerSocket(8080);
+            serverSocket = new ServerSocket(serverConfig.getServerPort());
             while (!stopRequested) {
                 Socket socket = serverSocket.accept();
                 executorService.submit(new IncomingRequestHandler(socket, new RequestParser()));
@@ -66,7 +73,9 @@ public class HttpMachine implements Runnable {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        HttpMachine machine = new HttpMachine();
+        ServerConfigParser serverConfigParser = new ServerConfigParser();
+        ServerConfig serverConfig = serverConfigParser.parse();
+        HttpMachine machine = new HttpMachine(serverConfig);
         machine.start();
     }
 }
