@@ -13,6 +13,7 @@
         <junit.version>5.7.0</junit.version>
         <logback.version>1.2.3</logback.version>
         <mockito.version>3.5.13</mockito.version>
+        <servlet.version>4.0.1</servlet.version>
     </properties>
 
     <dependencies>
@@ -21,7 +22,13 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+        </dependency>
 
+        <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

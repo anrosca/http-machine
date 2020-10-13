@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ResponseWriter {
 
-    public void handleRequest(Request request, Response response) {
+    public void writeResponse(Request request, Response response) {
         PrintWriter writer = response.getWriter();
         writeResponseLine(writer, response);
         writeHeaders(writer, response.getHttpHeaders());
@@ -13,7 +13,7 @@ public class ResponseWriter {
     }
 
     private void writeBody(PrintWriter writer, String requestBody) {
-       writer.write(requestBody);
+        writer.write(requestBody);
     }
 
     private void writeHeaders(PrintWriter writer, HttpHeaders httpHeaders) {
@@ -24,6 +24,8 @@ public class ResponseWriter {
     }
 
     private void writeResponseLine(PrintWriter writer, Response response) {
-        writer.println(String.format("%s 200 OK", response.getHttpVersion().toString()));
+        HttpStatus statusCode = response.getStatusCode();
+        writer.println(String.format("%s %d %s", response.getHttpVersion().toString(),
+                statusCode.getStatusCode(), statusCode.getReasonPhrase()));
     }
 }

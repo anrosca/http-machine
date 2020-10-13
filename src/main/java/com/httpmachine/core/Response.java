@@ -9,6 +9,7 @@ public class Response {
     private final PrintWriter writer;
     private final StringWriter requestBody = new StringWriter();
     private final PrintWriter bodyWriter = new PrintWriter(requestBody);
+    private HttpStatus httpStatus = HttpStatus.OK;
 
     public Response(PrintWriter writer) {
         this.writer = writer;
@@ -36,5 +37,13 @@ public class Response {
 
     public void addHeader(String headerName, String headerValue) {
         httpHeaders.addHeader(headerName, headerValue);
+    }
+
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
+    public HttpStatus getStatusCode() {
+        return httpStatus;
     }
 }
