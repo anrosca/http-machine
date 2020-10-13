@@ -18,7 +18,7 @@ public class ServerConfigParserTest {
             """;
 
     @Test
-    public void testParse() {
+    public void testParseValidXmlFile() {
         ServerConfigParser configParser = new ServerConfigParser();
 
         ServerConfig serverConfig = configParser.parse(new ByteArrayInputStream(VALID_CONFIG.getBytes(StandardCharsets.UTF_8)));
@@ -27,5 +27,12 @@ public class ServerConfigParserTest {
         ExecutorConfig expectedExecutorConfig =
                 new ExecutorConfig("webMachineThreadPool", "webMachine-exec-", 10, 4);
         assertEquals(expectedExecutorConfig, serverConfig.getExecutorConfig());
+    }
+
+    @Test
+    public void shouldThrowConfigParseException_whenParsingAnEmptyXmlFile() {
+        ServerConfigParser configParser = new ServerConfigParser();
+
+        assertThrows(ConfigParseException.class, () -> configParser.parse(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8))));
     }
 }

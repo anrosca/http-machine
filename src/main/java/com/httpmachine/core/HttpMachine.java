@@ -1,7 +1,8 @@
 package com.httpmachine.core;
 
 import com.httpmachine.core.config.ServerConfig;
-import com.httpmachine.core.config.ServerConfigParser;
+import com.httpmachine.core.executor.HttpMachineThreadFactory;
+import com.httpmachine.core.executor.ThreadNameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +17,15 @@ public class HttpMachine implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(HttpMachine.class);
     private static final ExecutorService requestListenerService = Executors.newSingleThreadExecutor();
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private final ExecutorService executorService;
     private final ServerConfig serverConfig;
     private volatile boolean stopRequested = false;
     private volatile ServerSocket serverSocket;
 
     public HttpMachine(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
+        HttpMachineThreadFactory threadFactory = new HttpMachineThreadFactory(new ThreadNameGenerator(serverConfig.getExecutorConfig()));
+        this.executorService = Executors.newFixedThreadPool(serverConfig.getExecutorConfig().maxThreads(), threadFactory);
     }
 
     public void start() {
@@ -70,12 +73,5 @@ public class HttpMachine implements Runnable {
         } finally {
             cleanup();
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        ServerConfigParser serverConfigParser = new ServerConfigParser();
-        ServerConfig serverConfig = serverConfigParser.parse();
-        HttpMachine machine = new HttpMachine(serverConfig);
-        machine.start();
     }
 }

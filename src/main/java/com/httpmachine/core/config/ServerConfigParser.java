@@ -1,6 +1,8 @@
 package com.httpmachine.core.config;
 
 import com.httpmachine.core.config.ServerConfig.ServerConfigBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -11,9 +13,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ServerConfigParser {
+    private static final Logger log = LoggerFactory.getLogger(ServerConfigParser.class);
+    private static final String SERVER_CONFIGURATION_FILE = "conf/server.xml";
 
     public ServerConfig parse() {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("conf/server.xml");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(SERVER_CONFIGURATION_FILE);
         return doParse(inputStream);
     }
 
@@ -25,6 +29,7 @@ public class ServerConfigParser {
         try {
             return tryParseServerConfig(inputStream);
         } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error("Error while parsing the {} configuration file", SERVER_CONFIGURATION_FILE, e);
             throw new ConfigParseException(e);
         }
     }
