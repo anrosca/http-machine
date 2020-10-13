@@ -1,6 +1,7 @@
 package com.httpmachine.core;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 public class Request {
     private final HttpMethod httpMethod;
@@ -17,6 +18,8 @@ public class Request {
 
     public static RequestBuilder builder(String requestLine) {
         String[] parts = requestLine.split(" ");
+        if (parts.length != 3)
+            throw new InvalidHttpRequestException(requestLine + " is not a valid HTTP request line.");
         HttpMethod httpMethod = HttpMethod.valueOf(parts[0]);
         String contextPath = parts[1];
         HttpVersion httpVersion = HttpVersion.from(parts[2]);
@@ -39,8 +42,8 @@ public class Request {
         return httpVersion;
     }
 
-    public InputStream getPayload() {
-        return payload;
+    public Optional<InputStream> getPayload() {
+        return Optional.ofNullable(payload);
     }
 
     public static class RequestBuilder {

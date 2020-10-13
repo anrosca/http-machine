@@ -19,6 +19,21 @@ public class HttpHeaders {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HttpHeaders that = (HttpHeaders) o;
+
+        return headers.equals(that.headers);
+    }
+
+    @Override
+    public int hashCode() {
+        return headers.hashCode();
+    }
+
+    @Override
     public String toString() {
         return "HttpHeaders{" +
                 "headers=" + headers +
