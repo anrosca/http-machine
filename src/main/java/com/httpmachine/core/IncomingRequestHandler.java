@@ -12,10 +12,12 @@ public class IncomingRequestHandler implements Runnable {
     private final Socket socket;
     private final RequestParser requestParser;
     private final ResponseWriter requestHandler = new ResponseWriter();
+    private final RequestPostProcessorRegistry requestPostProcessorRegistry = new RequestPostProcessorRegistry();
 
     public IncomingRequestHandler(Socket socket, RequestParser requestParser) {
         this.socket = socket;
         this.requestParser = requestParser;
+        requestPostProcessorRegistry.registerRequestPostProcessor(new EnrichResponseHeadersRequestPostProcessor());
     }
 
     @Override
@@ -46,6 +48,16 @@ public class IncomingRequestHandler implements Runnable {
         } catch (Throwable e) {
             log.error("Exception while handling the request", e);
             response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            postProcessRequest(request, response);
+        }
+    }
+
+    private void postProcessRequest(Request request, Response response) {
+        try {
+            requestPostProcessorRegistry.forEach(request, response);
+        } catch (Exception e) {
+            log.error("Error while postProcessing the request", e);
         }
     }
 
