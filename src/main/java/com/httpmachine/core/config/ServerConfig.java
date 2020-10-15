@@ -3,6 +3,10 @@ package com.httpmachine.core.config;
 public class ServerConfig {
     private int serverPort;
     private ExecutorConfig executorConfig;
+    private HostConfig hostConfig;
+
+    private ServerConfig() {
+    }
 
     public int getServerPort() {
         return serverPort;
@@ -10,6 +14,10 @@ public class ServerConfig {
 
     public ExecutorConfig getExecutorConfig() {
         return executorConfig;
+    }
+
+    public HostConfig getHostConfig() {
+        return hostConfig;
     }
 
     public static ServerConfigBuilder builder() {
@@ -26,6 +34,11 @@ public class ServerConfig {
 
         public ServerConfigBuilder executorConfig(ExecutorConfig executorConfig) {
             serverConfig.executorConfig = executorConfig;
+            return this;
+        }
+
+        public ServerConfigBuilder hostConfig(HostConfig hostConfig) {
+            serverConfig.hostConfig = hostConfig;
             return this;
         }
 

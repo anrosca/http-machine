@@ -40,8 +40,24 @@ public class ServerConfigParser {
         Element rootElement = document.getDocumentElement();
         ServerConfigBuilder serverConfigBuilder = ServerConfig.builder();
         String port = rootElement.getAttribute("port");
-        serverConfigBuilder.serverPort(Integer.parseInt(port));
-        return serverConfigBuilder.executorConfig(parseExecutorConfig(rootElement)).build();
+        return serverConfigBuilder.serverPort(Integer.parseInt(port))
+                .executorConfig(parseExecutorConfig(rootElement))
+                .hostConfig(parseHostConfig(rootElement))
+                .build();
+    }
+
+    private HostConfig parseHostConfig(Element serverElement) {
+        NodeList hostNodes = serverElement.getElementsByTagName("Host");
+        if (hostNodes.getLength() > 0) {
+            Node node = hostNodes.item(0);
+            NamedNodeMap attributes = node.getAttributes();
+            String name = attributes.getNamedItem("name").getTextContent();
+            String appBase = attributes.getNamedItem("appBase").getTextContent();
+            boolean unpackWars = Boolean.parseBoolean(attributes.getNamedItem("unpackWars").getTextContent());
+            boolean autoDeploy = Boolean.parseBoolean(attributes.getNamedItem("autoDeploy").getTextContent());
+            return new HostConfig(name, appBase, unpackWars, autoDeploy);
+        }
+        throw new ConfigParseException("/Server/Host element is not present in " + SERVER_CONFIGURATION_FILE);
     }
 
     private ExecutorConfig parseExecutorConfig(Element serverElement) {
@@ -55,6 +71,6 @@ public class ServerConfigParser {
             int minSpareThreads = Integer.parseInt(attributes.getNamedItem("minSpareThreads").getTextContent());
             return new ExecutorConfig(name, namePrefix, maxThreads, minSpareThreads);
         }
-        return null;
+        throw new ConfigParseException("/Server/Executor element is not present in " + SERVER_CONFIGURATION_FILE);
     }
 }

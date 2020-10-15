@@ -17,6 +17,12 @@ public class ServerConfigParserTest {
             </Server>
             """;
 
+    private static final String INVALID_CONFIG = """
+            <?xml version="1.0" encoding="UTF-8" ?>
+            <Server port="8080">
+            </Server>
+            """;
+
     @Test
     public void testParseValidXmlFile() {
         ServerConfigParser configParser = new ServerConfigParser();
@@ -27,6 +33,8 @@ public class ServerConfigParserTest {
         ExecutorConfig expectedExecutorConfig =
                 new ExecutorConfig("webMachineThreadPool", "webMachine-exec-", 10, 4);
         assertEquals(expectedExecutorConfig, serverConfig.getExecutorConfig());
+        HostConfig expectedHostConfig = new HostConfig("localhost", "webapps", true, true);
+        assertEquals(expectedHostConfig, serverConfig.getHostConfig());
     }
 
     @Test
@@ -34,5 +42,12 @@ public class ServerConfigParserTest {
         ServerConfigParser configParser = new ServerConfigParser();
 
         assertThrows(ConfigParseException.class, () -> configParser.parse(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8))));
+    }
+
+    @Test
+    public void shouldHandleGracefullyInvalidConfig() {
+        ServerConfigParser configParser = new ServerConfigParser();
+
+        assertThrows(ConfigParseException.class, () -> configParser.parse(new ByteArrayInputStream(INVALID_CONFIG.getBytes(StandardCharsets.UTF_8))));
     }
 }
