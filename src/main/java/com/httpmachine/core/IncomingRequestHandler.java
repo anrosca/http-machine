@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDateTime;
 
 public class IncomingRequestHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(IncomingRequestHandler.class);
@@ -17,7 +18,7 @@ public class IncomingRequestHandler implements Runnable {
     public IncomingRequestHandler(Socket socket, RequestParser requestParser) {
         this.socket = socket;
         this.requestParser = requestParser;
-        requestPostProcessorRegistry.registerRequestPostProcessor(new EnrichResponseHeadersRequestPostProcessor());
+        requestPostProcessorRegistry.registerRequestPostProcessor(new EnrichResponseHeadersRequestPostProcessor(LocalDateTime::now));
     }
 
     @Override
