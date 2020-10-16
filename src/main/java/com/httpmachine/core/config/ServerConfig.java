@@ -1,5 +1,7 @@
 package com.httpmachine.core.config;
 
+import java.io.File;
+
 public class ServerConfig {
     private int serverPort;
     private ExecutorConfig executorConfig;
@@ -18,6 +20,12 @@ public class ServerConfig {
 
     public HostConfig getHostConfig() {
         return hostConfig;
+    }
+
+    public String getAppsDirectory() {
+        String workingDirectory = System.getProperty("user.dir");
+        return workingDirectory + File.separator +
+                getHostConfig().appBase() + File.separator;
     }
 
     public static ServerConfigBuilder builder() {

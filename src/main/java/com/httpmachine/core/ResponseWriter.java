@@ -1,19 +1,27 @@
 package com.httpmachine.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
 public class ResponseWriter {
 
-    public void writeResponse(Request request, Response response) {
-        PrintWriter writer = response.getWriter();
+    public void writeResponse(Response response, OutputStream destinationStream) {
+        PrintWriter writer = new PrintWriter(destinationStream);
         writeResponseLine(writer, response);
         writeHeaders(writer, response.getHttpHeaders());
-        writeBody(writer, response.getRequestBody());
+        writeBody(response.getBody(), destinationStream);
     }
 
-    private void writeBody(PrintWriter writer, String requestBody) {
-        writer.write(requestBody);
+    private void writeBody(InputStream body, OutputStream destinationStream) {
+        try {
+            body.transferTo(destinationStream);
+            destinationStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void writeHeaders(PrintWriter writer, HttpHeaders httpHeaders) {
@@ -24,6 +32,7 @@ public class ResponseWriter {
             writer.print("\n");
         }
         writer.print("\n");
+        writer.flush();
     }
 
     private void writeResponseLine(PrintWriter writer, Response response) {
@@ -31,5 +40,6 @@ public class ResponseWriter {
         writer.print(String.format("%s %d %s", response.getHttpVersion().toString(),
                 statusCode.getStatusCode(), statusCode.getReasonPhrase()));
         writer.print("\n");
+        writer.flush();
     }
 }

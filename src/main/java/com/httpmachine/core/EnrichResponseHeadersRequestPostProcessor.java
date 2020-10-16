@@ -17,5 +17,6 @@ public class EnrichResponseHeadersRequestPostProcessor implements RequestPostPro
     public void postProcess(Request request, Response response) {
         response.addHeader("Date", dateTimeSupplier.get().toString());
         response.addHeader("Server", SERVER_NAME_HEADER_VALUE);
+        response.addHeader("Connection", "close");
     }
 }

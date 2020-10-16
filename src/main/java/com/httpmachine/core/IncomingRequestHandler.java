@@ -1,5 +1,6 @@
 package com.httpmachine.core;
 
+import com.httpmachine.core.config.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,20 +13,22 @@ public class IncomingRequestHandler implements Runnable {
 
     private final Socket socket;
     private final RequestParser requestParser;
+    private final ServerConfig serverConfig;
     private final ResponseWriter requestHandler = new ResponseWriter();
     private final RequestPostProcessorRegistry requestPostProcessorRegistry = new RequestPostProcessorRegistry();
 
-    public IncomingRequestHandler(Socket socket, RequestParser requestParser) {
+    public IncomingRequestHandler(Socket socket, RequestParser requestParser, ServerConfig serverConfig) {
         this.socket = socket;
         this.requestParser = requestParser;
+        this.serverConfig = serverConfig;
         requestPostProcessorRegistry.registerRequestPostProcessor(new EnrichResponseHeadersRequestPostProcessor(LocalDateTime::now));
     }
 
     @Override
     public void run() {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()))) {
-                executeRequest(reader, writer);
+            try (BufferedOutputStream responseStream = new BufferedOutputStream(socket.getOutputStream())) {
+                executeRequest(reader, responseStream);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -35,16 +38,16 @@ public class IncomingRequestHandler implements Runnable {
         }
     }
 
-    private void executeRequest(BufferedReader reader, PrintWriter writer) throws IOException {
+    private void executeRequest(BufferedReader reader, OutputStream responseStream) throws IOException {
         Request request = requestParser.parse(reader);
-        Response response = new Response(writer);
+        Response response = new Response();
         handleRequest(request, response);
-        requestHandler.writeResponse(request, response);
+        requestHandler.writeResponse(response, responseStream);
     }
 
     private void handleRequest(Request request, Response response) {
         try {
-            DummyResponseHandler handler = new DummyResponseHandler();
+            DummyResponseHandler handler = new DummyResponseHandler(serverConfig);
             handler.handleRequest(request, response);
         } catch (Throwable e) {
             log.error("Exception while handling the request", e);

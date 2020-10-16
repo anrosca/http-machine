@@ -1,18 +1,15 @@
 package com.httpmachine.core;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 
 public class Response {
     private final HttpVersion httpVersion = HttpVersion.HTTP_1_1;
     private final HttpHeaders httpHeaders = HttpHeaders.builder().build();
-    private final PrintWriter writer;
-    private final StringWriter requestBody = new StringWriter();
-    private final PrintWriter bodyWriter = new PrintWriter(requestBody);
+    private final ByteArrayOutputStream responsePayloadStream = new ByteArrayOutputStream();
+    private final PrintWriter bodyWriter = new PrintWriter(responsePayloadStream);
     private HttpStatus httpStatus = HttpStatus.OK;
 
-    public Response(PrintWriter writer) {
-        this.writer = writer;
+    public Response() {
     }
 
     public HttpVersion getHttpVersion() {
@@ -24,15 +21,11 @@ public class Response {
     }
 
     public PrintWriter getWriter() {
-        return writer;
-    }
-
-    public PrintWriter getBodyWriter() {
         return bodyWriter;
     }
 
-    public String getRequestBody() {
-        return requestBody.toString();
+    public OutputStream getOutputStream() {
+        return responsePayloadStream;
     }
 
     public void addHeader(String headerName, String headerValue) {
@@ -45,5 +38,9 @@ public class Response {
 
     public HttpStatus getStatusCode() {
         return httpStatus;
+    }
+
+    public InputStream getBody() {
+        return new ByteArrayInputStream(responsePayloadStream.toByteArray());
     }
 }
