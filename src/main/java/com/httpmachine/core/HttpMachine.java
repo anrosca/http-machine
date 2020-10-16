@@ -66,7 +66,7 @@ public class HttpMachine implements Runnable {
             serverSocket = new ServerSocket(serverConfig.getServerPort());
             while (!stopRequested) {
                 Socket socket = serverSocket.accept();
-                executorService.submit(new IncomingRequestHandler(socket, new RequestParser(), serverConfig));
+                executorService.submit(new IncomingConnectionHandler(socket, serverConfig));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

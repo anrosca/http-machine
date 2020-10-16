@@ -9,12 +9,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class DummyResponseHandler implements RequestHandler {
-    private static final Logger log = LoggerFactory.getLogger(DummyResponseHandler.class);
+public class StaticResourceRequestHandler implements RequestHandler {
+    private static final Logger log = LoggerFactory.getLogger(StaticResourceRequestHandler.class);
 
     private final StaticResourceResolver resourceResolver;
 
-    public DummyResponseHandler(ServerConfig serverConfig) {
+    public StaticResourceRequestHandler(ServerConfig serverConfig) {
         this.resourceResolver = new StaticResourceResolver(serverConfig);
     }
 
