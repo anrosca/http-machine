@@ -13,6 +13,7 @@ public class HttpMachineThreadFactory implements ThreadFactory {
     public Thread newThread(Runnable r) {
         Thread thread = new Thread(r);
         thread.setName(threadNameGenerator.nextThreadName());
+        thread.setUncaughtExceptionHandler(new LoggingUncaughtExceptionHandler());
         return thread;
     }
 }

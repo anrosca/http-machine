@@ -18,14 +18,18 @@ public class ResponseWriter {
 
     private void writeHeaders(PrintWriter writer, HttpHeaders httpHeaders) {
         for (Map.Entry<String, String> header : httpHeaders.getHeaders().entrySet()) {
-            writer.println(header.getKey() + ": " + header.getValue());
+            writer.print(header.getKey());
+            writer.print(": ");
+            writer.print(header.getValue());
+            writer.print("\n");
         }
-        writer.println();
+        writer.print("\n");
     }
 
     private void writeResponseLine(PrintWriter writer, Response response) {
         HttpStatus statusCode = response.getStatusCode();
-        writer.println(String.format("%s %d %s", response.getHttpVersion().toString(),
+        writer.print(String.format("%s %d %s", response.getHttpVersion().toString(),
                 statusCode.getStatusCode(), statusCode.getReasonPhrase()));
+        writer.print("\n");
     }
 }

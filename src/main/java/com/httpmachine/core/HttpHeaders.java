@@ -1,11 +1,11 @@
 package com.httpmachine.core;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class HttpHeaders {
-    private final Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new LinkedHashMap<>();
 
     private HttpHeaders() {
     }

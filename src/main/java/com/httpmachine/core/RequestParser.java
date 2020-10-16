@@ -17,7 +17,7 @@ public class RequestParser {
             throw new InvalidHttpRequestException();
         RequestBuilder requestBuilder = Request.builder(requestLine);
         HttpHeaders httpHeaders = parseHeaders(reader);
-        log.info("Incoming request headers: {}", httpHeaders);
+        log.debug("Incoming request line: {}", requestLine);
         InputStream payload = readPayload(reader);
         return requestBuilder.httpHeaders(httpHeaders)
                 .payload(payload)
